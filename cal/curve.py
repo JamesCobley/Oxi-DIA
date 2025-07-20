@@ -105,3 +105,22 @@ plt.show()
 # === 6. Save result ===
 df[['Run', 'Target_%_Ox', 'Observed_Reduced_MS1', 'Observed_Reduced_MS2',
     'Observed_Reduced_Combined', 'Expected_Reduced']].to_csv("redox_comparison.csv", index=False)
+
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+import numpy as np
+
+# === 6. Compute performance metrics ===
+def compute_metrics(observed, expected, label):
+    r2 = r2_score(expected, observed)
+    mse = mean_squared_error(expected, observed)
+    rmse = np.sqrt(mse)
+    mae = mean_absolute_error(expected, observed)
+    print(f'\nMetrics for {label}:')
+    print(f'  R²     = {r2:.4f}')
+    print(f'  RMSE   = {rmse:.4f}')
+    print(f'  MAE    = {mae:.4f}')
+    return r2, rmse, mae
+
+r2_ms1, rmse_ms1, mae_ms1 = compute_metrics(df['Observed_Reduced_MS1'], df['Expected_Reduced'], "MS1")
+r2_ms2, rmse_ms2, mae_ms2 = compute_metrics(df['Observed_Reduced_MS2'], df['Expected_Reduced'], "MS2")
+r2_comb, rmse_comb, mae_comb = compute_metrics(df['Observed_Reduced_Combined'], df['Expected_Reduced'], "Combined")
