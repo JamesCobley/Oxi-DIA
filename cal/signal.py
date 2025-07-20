@@ -54,3 +54,33 @@ print(summary_df)
 
 # Optional: Save to file
 summary_df.to_csv('/content/global_peptide_intensity_summary.csv', index=False)
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Paste your table into a CSV or load from DataFrame directly
+df = pd.read_csv('/content/global_peptide_intensity_summary.csv')  # Replace if using direct DataFrame
+
+# Compute proportions
+df['C_Peptide_%'] = (df['C_Peptides'] / df['Total_Peptides']) * 100
+df['C_MS1_%'] = (df['C_MS1'] / df['Total_MS1']) * 100
+df['C_MS2_%'] = (df['C_MS2'] / df['Total_MS2']) * 100
+
+# Sort by expected oxidation (infer from Run names)
+df['Oxidation'] = df['Run'].str.extract(r'James_(\d+)_').astype(int)
+df = df.sort_values(by='Oxidation')
+
+# Plot
+plt.figure(figsize=(12, 6))
+plt.plot(df['Oxidation'], df['C_MS1_%'], marker='o', label='MS1 Cys %')
+plt.plot(df['Oxidation'], df['C_MS2_%'], marker='s', label='MS2 Cys %')
+plt.plot(df['Oxidation'], df['C_Peptide_%'], marker='^', label='Cys Peptide %')
+plt.axhline(20, color='gray', linestyle='--', label='Reference Line (e.g., expected)')
+plt.xlabel('% Target Oxidation (inferred from Run name)')
+plt.ylabel('Percentage')
+plt.title('Cysteine Contribution vs. Target Oxidation')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.savefig('cysteine_contribution.png')
+plt.show()
