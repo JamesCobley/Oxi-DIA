@@ -4,7 +4,7 @@ from numpy.linalg import norm
 from math import acos, degrees
 
 # === Load your filtered dataframe with common sites ===
-df = pd.read_csv('/content/redox_sites (2).tsv', sep='\t')
+df = pd.read_csv('/content/redox_sites (3).tsv', sep='\t')
 
 # === Define paired columns ===
 air_cols = ['Sample_1_%Oxidized', 'Sample_2_%Oxidized', 'Sample_3_%Oxidized']
@@ -149,11 +149,13 @@ plt.subplot(1, 2, 1)
 sns.boxplot(x='Transformation', y='Angle_Degrees', data=df, palette='Set2')
 plt.title('Angular Deformation by Transformation')
 plt.ylabel('Angle (Degrees)')
+plt.savefig('/content/boxplot_angle.png', dpi=300)
 
 plt.subplot(1, 2, 2)
 sns.boxplot(x='Transformation', y='Mean_Redox_State', data=df, palette='Set3')
 plt.title('Mean Redox State by Transformation')
 plt.ylabel('% Oxidation')
+plt.savefig('/content/boxplot_redox.png', dpi=300)
 
 plt.tight_layout()
 plt.show()
