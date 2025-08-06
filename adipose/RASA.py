@@ -51,24 +51,40 @@ df['Transformation'] = df.apply(
     lambda row: classify_population_geometry(row['Redox_Vector'], row['Std_Redox'], row['Angle_Degrees']),
     axis=1
 )
+
 # === Save transformation-classified dataframe ===
 df.to_csv('/content/transformation_table_with_vectors.csv', index=False)
 print("✅ Saved transformation-classified redox table to: /content/transformation_table_with_vectors.csv")
-
 
 # === Print summary ===
 print("\nTransformation Class Counts:")
 print(df['Transformation'].value_counts())
 
+# === Summary statistics ===
 print("\nAverage Angular Deformation per Class:")
 print(df.groupby('Transformation')['Angle_Degrees'].agg(['mean', 'std', 'count']).round(2))
 
-# === Visualization ===
+print("\nAverage Mean Redox State per Class:")
+print(df.groupby('Transformation')['Mean_Redox'].agg(['mean', 'std', 'count']).round(2))
+
+# === Combined Violin Plot ===
 sns.set(style="whitegrid")
-plt.figure(figsize=(8, 5))
+plt.figure(figsize=(14, 6))
+
+# Subplot 1: Angular deviation
+plt.subplot(1, 2, 1)
 sns.violinplot(data=df, x='Transformation', y='Angle_Degrees', palette='Set2')
-plt.title('Redox Angular Spread by Transformation Class')
+plt.title('Angular Deformation by Transformation Class')
 plt.ylabel('Angle (Degrees)')
+plt.xlabel('')
+
+# Subplot 2: Mean redox state
+plt.subplot(1, 2, 2)
+sns.violinplot(data=df, x='Transformation', y='Mean_Redox', palette='Set3')
+plt.title('Mean Redox State by Transformation Class')
+plt.ylabel('% Oxidation')
+plt.xlabel('')
+
 plt.tight_layout()
-plt.savefig("/content/transformation_violinplot.png", dpi=300)
+plt.savefig("/content/transformation_violinplots_angle_redox.png", dpi=300)
 plt.show()
